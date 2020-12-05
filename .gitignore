@@ -1,1 +1,18 @@
+#ignore temporary notebooks
+.ipynb_checkpoints/
+
+#ignore temporary results
+results/
+
+#ignore local saves
+weights/
+my_model/
+
+#ignore TeX auxiliary files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+
 
