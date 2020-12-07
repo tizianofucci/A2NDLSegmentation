@@ -8,6 +8,9 @@ results/
 weights/
 my_model/
 
+#ignore dataset
+Development_Dataset
+
 #ignore TeX auxiliary files
 *.aux
 *.log
