@@ -75,50 +75,59 @@ contents}}
 	\tableofcontents
 	\chapter{Introduction}
 		\section{Description of the task}
-			The homework consists in an image classification problem on the proposed dataset. In particular, it is required to classify images depicting groups of people based on the number of masked people. In the specific, the solution must discriminate between images depending on the following cases:
-
-\begin{enumerate} 
-	\item no person in the image is wearing a mask;
-	\item all the people in the image are wearing a mask;
-	\item someone in the image is not wearing a mask.
-\end{enumerate}
-In the following figure, one sample image for each class is shown.
+			The homework consists in an image segmentation problem on the proposed dataset. In particular, it is required to segment RGB images to distinguish between crop, weeds, and background, as done in the following example.
 
 \begin{figure}[H]
 \renewcommand*\thesubfigure{\arabic{subfigure}} 
 \centering
-\begin{subfigure}{.3\textwidth}
+\begin{subfigure}{.45\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{image0}
-  \caption{}
+  \caption{dataset image}
   \label{fig:sub1}
 \end{subfigure}
-\begin{subfigure}{.3\textwidth}
+\begin{subfigure}{.45\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{image1}
-  \caption{}
+  \caption{segmented image}
   \label{fig:sub2}
-\end{subfigure}
-\begin{subfigure}{.3\textwidth}
-  \centering
-  \includegraphics[width=1\linewidth]{image2}
-  \caption{}
-  \label{fig:sub3}
 \end{subfigure}
 \end{figure}
 
-Thus, the classification is performed on 3 different classes. Being a classification problem, given an image, the goal is to predict the correct class label.
+The competition is public and  organized by the ACRE (Agri-food Competition for Robot Evaluation).
 
 	\section{Dataset}
+The dataset is composed of images captured by different sensors in different moments and are about two kinds of crops: haricot and maize. Data comes from the 2019 ROSE Challenge where four teams have competed with agricultural robots. Each team has collected images of the same two crops, but in different moments and with different sensors (RGB cameras).
 
-The dataset is composed by .jpg images of different size, divided in two folders:
+Images in the dataset are divided into different folders based on the team that acquired the image, i.e., Bipbip, Pead, Roseau, Weedelec. For each team, we have two different sub-folders named as the type of crop present in the images, i.e., Haricot and Mais. Finally, for each crop, the captured RGB images (in the Images folder) and the corresponding ground-truth segmentations (in the Masks folder) are provided.
+	
+	\subsection{Images}
+Teams' images share most of the properties but differ from image size and file format.
+
+Shared properties:
+\begin{itemize}
+
+\item{Color space: RGB}
+\item{Classes:}
+\begin{itemize}
+\item{Crop}
+\item{Weed}
+\item{Background}
+\end{itemize}
+\item{Number of Training images (per team per crop): 90}
+\item{Number of Test\_Dev images (per team per crop): 15}
+\item{Number of Test images (per team per crop): 20}
+\end{itemize}
+	\subsection{Masks}
+Masks folders contain the ground-truth segmentation for each corresponding (having the same name) image in the Images folder. They have the same exact properties of the Images set apart from the fact that they all have the same file format: PNG.
+
+In each mask, classes are represented by different colors. The dictionary which allows assigning a label to each corresponding color is provided in the starting\_kit, as well as the example script in which we show how to transform RGB masks into target masks. In the following, the provided dictionary ('RGBtoTarget.txt' in the starting kit):
 			\begin{itemize}
-				\item training (5614 images)
-				\item test (450 images)
+				\item RGB: 0 0 0 - Target 0 (background)
+				\item RGB: 254 124 18 - Target 0 (background)
+				\item RGB: 255 255 255 - Target 1 (crop)
+				\item RGB: 216 67 82 - Target 2 (weed)
 			\end{itemize}
-
-A JSON file, containing the labels of the training images, is attached to the dataset.
-The dataset requires the training images to be divided into three folders (created manually), corresponding to the three target classes. The division was done with a python script, which is contained in the notebooks.
 
 \textit{Note: the dataset path expected by the script is:}
 
