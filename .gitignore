@@ -16,6 +16,7 @@ Notebook/binary_classification_experiments/
 Notebook/multiclass_exps/
 
 Notebook/drive/
+
 #ignore TeX auxiliary files
 *.aux
 *.log
