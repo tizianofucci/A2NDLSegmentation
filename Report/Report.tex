@@ -64,7 +64,7 @@ contents}}
 \posttitle{\end{center}}
 
 % Here we go
-\title{Artificial Neural Networks and Deep Learning \\ Homework 1 - Image Classification}
+\title{Artificial Neural Networks and Deep Learning \\ Homework 2 - Image Segmentation}
 \author{Frantuma Elia - 10567359 - 945729, \\
 		Fucci Tiziano - 10524029 - 946638}
 \date{A.Y. 2020/2021}
@@ -101,41 +101,35 @@ The dataset is composed of images captured by different sensors in different mom
 
 Images in the dataset are divided into different folders based on the team that acquired the image, i.e., Bipbip, Pead, Roseau, Weedelec. For each team, we have two different sub-folders named as the type of crop present in the images, i.e., Haricot and Mais. Finally, for each crop, the captured RGB images (in the Images folder) and the corresponding ground-truth segmentations (in the Masks folder) are provided.
 	
+We decided to apply for maize from the Bipbip dataset.
 	\subsection{Images}
-Teams' images share most of the properties but differ from image size and file format.
-
-Shared properties:
+Teams' images share most of the properties but differ from image size and file format. The common properties are:
 \begin{itemize}
 
-\item{Color space: RGB}
-\item{Classes:}
+\item{color space: RGB;}
+\item{classes:}
 \begin{itemize}
-\item{Crop}
-\item{Weed}
-\item{Background}
+\item{crop;}
+\item{weed;}
+\item{background;}
 \end{itemize}
-\item{Number of Training images (per team per crop): 90}
-\item{Number of Test\_Dev images (per team per crop): 15}
-\item{Number of Test images (per team per crop): 20}
+\item{number of Training images (per team per crop): 90;}
+\item{number of Test\_Dev images (per team per crop): 15;}
+\item{number of Test images (per team per crop): 20.}
 \end{itemize}
 	\subsection{Masks}
 Masks folders contain the ground-truth segmentation for each corresponding (having the same name) image in the Images folder. They have the same exact properties of the Images set apart from the fact that they all have the same file format: PNG.
 
 In each mask, classes are represented by different colors. The dictionary which allows assigning a label to each corresponding color is provided in the starting\_kit, as well as the example script in which we show how to transform RGB masks into target masks. In the following, the provided dictionary ('RGBtoTarget.txt' in the starting kit):
 			\begin{itemize}
-				\item RGB: 0 0 0 - Target 0 (background)
-				\item RGB: 254 124 18 - Target 0 (background)
-				\item RGB: 255 255 255 - Target 1 (crop)
-				\item RGB: 216 67 82 - Target 2 (weed)
+				\item RGB: 0 0 0 - Target 0 (background);
+				\item RGB: 254 124 18 - Target 0 (background);
+				\item RGB: 255 255 255 - Target 1 (crop);
+				\item RGB: 216 67 82 - Target 2 (weed).
 			\end{itemize}
 
-\textit{Note: the dataset path expected by the script is:}
-
- ..\textbackslash\textbackslash artificial-neural-networks-and-deep-learning-2020\textbackslash\textbackslash MaskDataset
-
 	\subsection{Data augmentation}
-We have performed data augmentation in order to increase the dataset dimension. Some of the parameters used to perform the transformations are: brightness, zoom, horizontal/vertical shift and flip.
-We didn't use rotation, since we noticed that the filling could reduce the performance of the classifier.
+We have performed data augmentation in order to increase the dataset dimension. Some of the parameters used to perform the transformations are: rotation, zoom, horizontal/vertical shift and flip.
 
 	\section{Validation set}
 
@@ -145,45 +139,13 @@ In our case, we parametrized the number of training images to be moved into the 
 
 
 	\section{Test set}
-The test set was left untouched, apart from the creation of one directory, named ``unlabeled'', which contains all the images.
+Test\_Dev images are provided without any ground-truth mask. Participants are required to provide the segmentations for the Test\_Dev images by submitting the solution with the correct submission format. 
 	\section{Evaluation}
-Submissions are evaluated on multiclass accuracy, which is simply the average number of observations with the correct label.
-To submit a prediction, it is necessary to produce a .csv file containing the predictions associated to each test image. This file has to be submitted to the Kaggle page of the competition to obtain the accuracy score on the test set.
+Submissions are evaluated on the mean Intersection over Union (IoU) obtained on the two classes, crop and weed. IoU is computed for each target class (crop and weed) separately, by considering prediction and ground truth as binary masks. Then, the final IoU is computed by averaging the two.
 
 	%end of first chapter
 
 	\chapter{Neural network architecture}
-		\section{Ex-novo architecture}
-	First, we tried to build a sequential neural network from scratch: we made many experiments, each one with a slightly different parameter configuration. Among them:
-			\begin{itemize}
-				\item \texttt{start\_f}: the number of initial filters;
-				\item \texttt{depth}: the number of convolutional layers;
-				\item the learning rate;
-				\item the batch size;
-				\item the size of the input image;
-				\item the shape of the neuron activation function;	
-				\item the number of fully connected layers.
-			\end{itemize}
-	After few experiments, we found that the best model was a convolutional neural network having \texttt{start\_f = 9} and \texttt{depth = 7}. The complete model of the network is descripted in the attached file \texttt{HomeworkImages.ipynb}.
-		\subsection{Score}
-	The best score of the network was 0.85555, obtained with the following settings:
-	\begin{itemize}
-		\item	\texttt{start\_f = 9};
-		\item	\texttt{depth = 7};
-		\item image resolution: 348x522;
-		\item batch size = 8;
-		\item two fully connected layers, made of 512 and 256 neurons.
-	\end{itemize}
-		\subsection{Diagrams}
-Here we show how loss and accuracy changed during the network training, both for the training (grey) and the validation set (orange).
-		\begin{figure}[H]
-			\includegraphics[scale = 0.5, center]{ex-Novo accuracy}
-			\caption{Accuracy plot}
-		\end{figure}
-		\begin{figure}[H]
-		\includegraphics[scale = 0.5, center]{ex-Novo loss}
-		\caption{Loss plot}
-		\end{figure}
 		
 		\section{Transfer learning with VGG}
 	The final version of the ex-novo architecture was pretty accurate, but we could not achieve better results by just changing the parameters. We decided to use a pre-trained, reliable and successful architecture.\\
@@ -241,7 +203,8 @@ Here we show how loss and accuracy changed during the network training, both for
 		\section{Links}
 
 \begin{itemize}
-	\item GitHub repository of the project: \url{https://github.com/tizianofucci/A2NDLKaggle}
+	\item GitHub repository of the project: \url{https://github.com/tizianofucci/A2NDLSegmentation}
+	\item Competition web page: \url{https://competitions.codalab.org/competitions/27176}
 \end{itemize}
 
 \end{document}
