@@ -131,11 +131,14 @@ In each mask, classes are represented by different colors. The dictionary which 
 	\subsection{Data augmentation}
 We have performed data augmentation in order to increase the dataset dimension. Some of the parameters used to perform the transformations are: rotation, zoom, horizontal/vertical shift and flip.
 
+	\subsection{Tiling}
+During the training, we have experienced many issues with the RAM and VRAM. This happened both with Colab Pro and local tests. We decided not to downsize the dataset images, since the quality loss would have been too much, so we performed image tiling. In the final version, we splitted the original images into 8 tiles per image.
+
 	\section{Validation set}
 
 No automatic validation set is provided. This means that a subset of the training set must be used to perform validation.
 
-In our case, we parametrized the number of training images to be moved into the validation set, with values between 3-15\%.
+In our case, we parametrized the number of training images to be moved into the validation set, with a 10\% probability.
 
 
 	\section{Test set}
@@ -145,43 +148,42 @@ Submissions are evaluated on the mean Intersection over Union (IoU) obtained on 
 
 	%end of first chapter
 
-	\chapter{Neural network architecture}
+	\chapter{Neural network architecture}		
+		\section{U-Net}
+Our first try was with U-Net, but the results turned out to be very poor. In particular, the high number of parameters made the tuning very difficult to perform. The training time was simply too much to experience some progress, since it took up to one hour and a half for one epoch. After some epoch, the result was the one shown below. 
+\begin{figure}[H]
+	\includegraphics[scale = .75, center]{U_Net}
+	\caption{dataset image, target segmentation, actual segmentation}
+\end{figure}
+	
+We tried to change the learning rate, the weights initialization and the loss function, using a weighted one, but the situation remained the same.	
 		
-		\section{Transfer learning with VGG}
-	The final version of the ex-novo architecture was pretty accurate, but we could not achieve better results by just changing the parameters. We decided to use a pre-trained, reliable and successful architecture.\\
-	Our first try was with VGG16, because we've seen it during the lectures. Also in this case we made many experiments, each one with a different parameter configuration:
-	\begin{itemize}
-		\item \texttt{freeze\_until}: the layer of the network from which we want to fine-tune;
-		\item the learning rate;
-		\item the size of the input image;
-		\item the shape of the neuron activation function;	
-		\item the number of fully connected layers.
-		\item the number of neurons in fully connected layers.
-	\end{itemize}
-		\subsection{Score}
-The best score of the network was 0.89333, obtained with the following settings: 
-	\begin{itemize}
-		\item	\texttt{freeze\_until = 11};
-		\item one fully connnected layer with 32 neurons before the softmax layer.
-	\end{itemize}
+		\section{Transfer learning with MobileNetV2}
+Then, we tried to use MobileNetV2, since it was suggested by the TensorFlow tutorial. After a while, we noticed that the trained model could not distinguish the maize plants from weeds. The result was a well defined foreground, but with a faded violet, since the two colours were mixed in correspondence of the plant.  This was probably caused by the incompatibility of the weights with non-squared images, as shown by Jupyter in a warning. 
+	
 
-		\subsection{Diagrams}
-Here we show how loss and accuracy changed during the network training, both for the training (grey) and the validation set (orange).
-		\begin{figure}[H]
-			\includegraphics[scale = 0.5, center]{vgg accuracy}
-			\caption{Accuracy plot}
-		\end{figure}
-		\begin{figure}[H]
-			\includegraphics[scale = 0.5, center]{vgg loss}
-			\caption{Loss plot}
-		\end{figure}
+\begin{figure}[H]
+	\includegraphics[scale = 1.2, center]{MobileNetV2}
+	\caption{image segmentation}
+\end{figure}
 
-\section{Transfer learning with ImageResNetV2}
+		\section{U\_Net, with VGG as a backbone}
+	\subsection{Without skip connections}
 For our last attempt we decided to use ImageResNetV2, the best performing on the ImageNet dataset. The approach in this case has been similar to the one with VGG, since we only changed the backbone. One significant change that has been made is the replacement of the fully connected layer(s) with a Global Average Pooling layer.
+
+\begin{figure}[H]
+	\includegraphics[scale = .7, center]{vgg_upsampling_without}
+	\caption{image segmentation}
+\end{figure}
+	\subsection{With skip connections}
+\begin{figure}[H]
+	\includegraphics[scale = .49, center]{vgg_model}
+	\caption{network obtained with VGG and skipped connections}
+\end{figure}
 \subsection{Score}
 	The best score of the network was 0.96888, obtained with the following settings:
 	\begin{itemize}
-		\item	\texttt{freeze\_until = 150};
+		\item	\texttt{freeze\_ = 150};
 		\item image resolution: 348x522;
 		\item batch size = 8.
 	\end{itemize}
@@ -196,8 +198,12 @@ Here we show how loss and accuracy changed during the network training, both for
 	\caption{Loss plot}
 \end{figure}
 		
-		
-	
+	%end of second chapter
+
+\chapter{Main issues}
+During this competition we had to face problems that didn't occur in the first one: despite we could solve memory capacity issues by tiling the images, the main problem remained time. The classic network tuning procedure has been hardened by the great training time, up to one hour per epoch (obtained with U-Net). Even with the other network architectures, the training time was so long that it took hours, or days, to understand if the network was properly learning the model. This was the main reason because we used the Maize dataset only.
+
+The tiling procedure took so long (8-10 hours) that we could not make many attempts on how many tiles were better. Furthemore, we had to manually fix the folder structure in the .zip file, since Colab didn't allow us to recreate the original dataset structure.
 	%end of third chapter
 	\chapter{References}
 		\section{Links}
