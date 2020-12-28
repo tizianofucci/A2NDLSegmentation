@@ -159,7 +159,7 @@ Our first try was with U-Net, but the results turned out to be very poor. In par
 We tried to change the learning rate, the weights initialization and the loss function, using a weighted one, but the situation remained the same.	
 		
 		\section{Transfer learning with MobileNetV2}
-Then, we tried to use MobileNetV2, since it was suggested by the TensorFlow tutorial. After a while, we noticed that the trained model could not distinguish the maize plants from weeds. The result was a well defined foreground, but with a faded violet, since the two colours were mixed in correspondence of the plant.  This was probably caused by the incompatibility of the weights with non-squared images, as shown by Jupyter in a warning. 
+Then, we tried to use MobileNetV2, as it was suggested by the TensorFlow tutorial. After a while, we noticed that the trained model could not distinguish the maize plants from weeds. The result was a well defined foreground, but with a faded violet, since the two colours were mixed in correspondence of the plant.  This was probably caused by the incompatibility of the weights with non-squared images, as shown by Jupyter in a warning. 
 	
 
 \begin{figure}[H]
@@ -169,34 +169,25 @@ Then, we tried to use MobileNetV2, since it was suggested by the TensorFlow tuto
 
 		\section{U\_Net, with VGG as a backbone}
 	\subsection{Without skip connections}
-For our last attempt we decided to use ImageResNetV2, the best performing on the ImageNet dataset. The approach in this case has been similar to the one with VGG, since we only changed the backbone. One significant change that has been made is the replacement of the fully connected layer(s) with a Global Average Pooling layer.
+This architecture is taken from the notebooks seen during the exercise sessions of the course, adapted to this competition.
+After some epochs, the results were similar to the one shown below.
 
 \begin{figure}[H]
-	\includegraphics[scale = .7, center]{vgg_upsampling_without}
+	\includegraphics[scale = .75, center]{vgg_upsampling_without}
 	\caption{image segmentation}
 \end{figure}
 	\subsection{With skip connections}
 \begin{figure}[H]
-	\includegraphics[scale = .49, center]{vgg_model}
+	\includegraphics[scale = .45, center]{vgg_model}
 	\caption{network obtained with VGG and skipped connections}
 \end{figure}
+After considering the former architecture, we decided to add skip connections in order to improve the performance of the upsampling layers. This led to a better definition of shapes and leaves and thus to a higher score.
+\begin{figure}[H]
+	\includegraphics[scale = .75, center]{vgg_upsampling_with}
+	\caption{image segmentation}
+\end{figure}
 \subsection{Score}
-	The best score of the network was 0.96888, obtained with the following settings:
-	\begin{itemize}
-		\item	\texttt{freeze\_ = 150};
-		\item image resolution: 348x522;
-		\item batch size = 8.
-	\end{itemize}
-\subsection{Plots}
-Here we show how loss and accuracy changed during the network training, both for the training (grey) and the validation set (orange).
-\begin{figure}[H]
-	\includegraphics[scale = 0.5, center]{ResNet accuracy}
-	\caption{Accuracy plot}
-\end{figure}
-\begin{figure}[H]
-	\includegraphics[scale = 0.5, center]{ResNet loss}
-	\caption{Loss plot}
-\end{figure}
+	The best score of the network was 0.7207, obtained with the skip connections.
 		
 	%end of second chapter
 
@@ -204,6 +195,8 @@ Here we show how loss and accuracy changed during the network training, both for
 During this competition we had to face problems that didn't occur in the first one: despite we could solve memory capacity issues by tiling the images, the main problem remained time. The classic network tuning procedure has been hardened by the great training time, up to one hour per epoch (obtained with U-Net). Even with the other network architectures, the training time was so long that it took hours, or days, to understand if the network was properly learning the model. This was the main reason because we used the Maize dataset only.
 
 The tiling procedure took so long (8-10 hours) that we could not make many attempts on how many tiles were better. Furthemore, we had to manually fix the folder structure in the .zip file, since Colab didn't allow us to recreate the original dataset structure.
+
+Other factors that limited our score were the absence of the last softmax layer and the TensorFlow preprocessing of predictions for VGG, that drastically lowered the performance of the network. We managed to correct these two mistakes just in the last days.
 	%end of third chapter
 	\chapter{References}
 		\section{Links}
