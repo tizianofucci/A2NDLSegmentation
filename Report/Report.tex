@@ -149,6 +149,7 @@ Submissions are evaluated on the mean Intersection over Union (IoU) obtained on 
 	%end of first chapter
 
 	\chapter{Neural network architecture}		
+For all the networks, we have modified the function \texttt{read\_mask\_example}. The modified function can be found into the \texttt{starting\_kit} folder. The notebook expects that folder to be in \texttt{\textbackslash content\textbackslash drive\textbackslash MyDrive}.
 		\section{U-Net}
 Our first try was with U-Net, but the results turned out to be very poor. In particular, the high number of parameters made the tuning very difficult to perform. The training time was simply too much to experience some progress, since it took up to one hour and a half for one epoch. After some epoch, the result was the one shown below. 
 \begin{figure}[H]
@@ -167,7 +168,7 @@ Then, we tried to use MobileNetV2, as it was suggested by the TensorFlow tutoria
 	\caption{image segmentation}
 \end{figure}
 
-		\section{U\_Net, with VGG as a backbone}
+		\section{U-Net, with VGG as a backbone}
 	\subsection{Without skip connections}
 This architecture is taken from the notebooks seen during the exercise sessions of the course, adapted to this competition.
 After some epochs, the results were similar to the one shown below.

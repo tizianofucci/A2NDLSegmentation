@@ -10,6 +10,7 @@ my_model/
 
 #ignore dataset
 Development_Dataset/
+Final_Dataset/
 
 Notebook/binary_classification_experiments/
 
